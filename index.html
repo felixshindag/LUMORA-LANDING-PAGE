@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMORA — A Little Green, A Better Space</title>
+<meta name="description" content="LUMORA — small decorative plant pots for study desks, bedrooms, and small spaces. Small plant. Big difference.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 90 C48 60 52 45 50 15 C40 30 20 30 15 15 C15 40 30 55 50 60 C50 60 65 30 85 25 C82 45 65 58 50 60' fill='none' stroke='%2335483A' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* =========================================================
+   1. CSS VARIABLES — design tokens
+   ========================================================= */
+:root{
+  /* -- color palette (from brand brief) -- */
+  --cream:        #F7F4EE;
+  --off-white:    #FFFCF8;
+  --dark-green:   #35483A;
+  --soft-green:   #879B82;
+  --wood-brown:   #9A6B45;
+  --deep-red:     #A9433F;
+
+  /* rgb triplets, used for rgba() tints/shadows without adding new named colors */
+  --dark-green-rgb: 53,72,58;
+  --soft-green-rgb: 135,155,130;
+  --wood-brown-rgb: 154,107,69;
+  --deep-red-rgb:   169,67,63;
+
+  /* semantic text tints, derived from dark-green so every "muted" line in the
+     page shares one source of truth instead of ad-hoc opacity values */
+  --text-muted: rgba(var(--dark-green-rgb), 0.76);
+  --text-faint: rgba(var(--dark-green-rgb), 0.78);
+
+  /* -- typography -- */
+  --font-heading: "Playfair Display", "Georgia", serif;
+  --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+
+  --fs-h1:   clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  --fs-h2:   clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --fs-h3:   clamp(1.15rem, 1.05rem + 0.4vw, 1.375rem);
+  --fs-lead: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  --fs-body: 1rem;
+  --fs-small: 0.9rem;
+  --fs-label: 0.78rem;
+
+  /* -- spacing scale (bumped up for a more premium, airy feel) -- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs:  0.75rem;
+  --space-sm:  1.5rem;
+  --space-md:  2.25rem;
+  --space-lg:  3.5rem;
+  --space-xl:  clamp(4rem, 3.1rem + 3.6vw, 6.5rem);
+  --space-2xl: clamp(5.5rem, 4.2rem + 5.6vw, 9.5rem);
+
+  /* -- layout -- */
+  --container-w: 1180px;
+  --radius-card: 20px;
+  --radius-img:  22px;
+  --radius-pill: 999px;
+
+  /* -- effects -- */
+  --shadow-soft: 0 20px 44px -22px rgba(var(--dark-green-rgb), 0.3);
+  --shadow-hero: 0 30px 64px -20px rgba(var(--dark-green-rgb), 0.38);
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 0.35s;
+}
+
+/* =========================================================
+   2. RESET
+   ========================================================= */
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body, h1, h2, h3, p, figure, blockquote{ margin: 0; }
+ul{ list-style: none; margin: 0; padding: 0; }
+img{ max-width: 100%; display: block; }
+button{ font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+a{ color: inherit; text-decoration: none; }
+input, textarea{ font: inherit; }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   3. BASE / TYPOGRAPHY
+   ========================================================= */
+body{
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  color: var(--dark-green);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;      /* belt-and-suspenders: no horizontal scroll on mobile */
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3{
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--dark-green);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+h1{ font-size: var(--fs-h1); font-weight: 600; }
+h2{ font-size: var(--fs-h2); }
+h3{ font-size: var(--fs-h3); font-weight: 600; }
+
+p{ max-width: 62ch; }
+
+.lead{
+  font-size: var(--fs-lead);
+  color: var(--text-muted);
+}
+
+:focus-visible{
+  outline: 2px solid var(--dark-green);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* =========================================================
+   4. LAYOUT UTILITIES
+   ========================================================= */
+.container{
+  width: 100%;
+  max-width: var(--container-w);
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+}
+
+.section{ padding-block: var(--space-2xl); position: relative; }
+.section--tight{ padding-block: var(--space-xl); }
+
+.section-head{
+  max-width: 640px;
+  margin-bottom: var(--space-lg);
+}
+.section-head p{ margin-top: var(--space-xs); }
+.section-head--center{ margin-inline: auto; text-align: center; }
+
+.eyebrow{
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--dark-green);
+  margin-bottom: var(--space-sm);
+}
+
+.numeral{
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 1.75rem;
+  color: var(--dark-green);
+  line-height: 1;
+  display: block;
+  margin-bottom: var(--space-2xs);
+}
+
+/* -- buttons -- */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 0.95em 2em;
+  border-radius: var(--radius-pill);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  white-space: nowrap;
+}
+.btn-primary{
+  background: var(--dark-green);
+  color: var(--off-white);
+}
+.btn-primary:hover, .btn-primary:focus-visible{
+  background: #2a3a2e;
+  transform: translateY(-2px);
+}
+.btn-outline{
+  background: transparent;
+  color: var(--dark-green);
+  border: 1.5px solid rgba(var(--dark-green-rgb), 0.35);
+}
+.btn-outline:hover, .btn-outline:focus-visible{
+  border-color: var(--dark-green);
+  background: rgba(var(--dark-green-rgb), 0.06);
+}
+.btn-on-dark{
+  background: var(--off-white);
+  color: var(--dark-green);
+}
+.btn-on-dark:hover, .btn-on-dark:focus-visible{
+  background: var(--cream);
+  transform: translateY(-2px);
+}
+.btn-text{
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  padding-bottom: 3px;
+  border-bottom: 1.5px solid rgba(var(--dark-green-rgb), 0.4);
+  transition: border-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.btn-text:hover, .btn-text:focus-visible{ border-color: var(--dark-green); opacity: 0.75; }
+.btn-sm{ padding: 0.7em 1.5em; font-size: 0.85rem; min-height: 44px; }
+
+/* -- grid helpers -- */
+.grid{ display: grid; gap: var(--space-md); }
+.grid-3{ grid-template-columns: 1fr; }
+.grid-4{ grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 700px){
+  .grid-3{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 860px){
+  .grid-4{ grid-template-columns: repeat(4, 1fr); }
+}
+
+/* -- collection grid: 1 / 2 / 3 columns, sized for 6 product cards -- */
+.collection-grid{ display: grid; gap: var(--space-lg); }
+@media (min-width: 640px){
+  .collection-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px){
+  .collection-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+.product-card--placeholder .placeholder-frame{
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(var(--dark-green-rgb), 0.28);
+  background: rgba(var(--soft-green-rgb), 0.16);
+}
+.product-card--placeholder .placeholder-label{
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dark-green);
+}
+
+/* -- image frame w/ graceful fallback for missing product photos -- */
+.img-frame{
+  position: relative;
+  border-radius: var(--radius-img);
+  overflow: hidden;
+  background: linear-gradient(155deg, rgba(var(--soft-green-rgb),0.55), rgba(var(--dark-green-rgb),0.85));
+}
+.img-frame img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* crop, never stretch/distort */
+  transition: opacity 0.4s ease, transform 0.6s var(--ease);
+}
+.img-frame .img-fallback-label{
+  display: none;         /* only shown by the onerror handler below, never over a real photo */
+  position: absolute;
+  inset: 0;
+  align-items: flex-end;
+  padding: var(--space-md);
+  font-family: var(--font-heading);
+  font-style: italic;
+  color: rgba(255,255,255,0.85);
+  font-size: 1.05rem;
+  pointer-events: none;
+}
+
+/* -- decorative botanical line-art motif (kept in one place only: final CTA) -- */
+.botanical-motif{
+  position: absolute;
+  color: var(--soft-green);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* -- scroll reveal (subtle, one-time fade + rise) -- */
+.reveal{
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.reveal.is-visible{ opacity: 1; transform: none; }
+
+/* subtle stagger so grouped cards don't all animate in one flat instant */
+.grid .reveal:nth-child(2), .order-flow .reveal:nth-child(2),
+.testimonial-grid .reveal:nth-child(2), .mood-grid .reveal:nth-child(2),
+.collection-grid .reveal:nth-child(2){ transition-delay: 0.08s; }
+.grid .reveal:nth-child(3), .order-flow .reveal:nth-child(3),
+.collection-grid .reveal:nth-child(3){ transition-delay: 0.16s; }
+.grid .reveal:nth-child(4), .collection-grid .reveal:nth-child(4){ transition-delay: 0.24s; }
+.collection-grid .reveal:nth-child(5){ transition-delay: 0.32s; }
+.collection-grid .reveal:nth-child(6){ transition-delay: 0.40s; }
+
+/* =========================================================
+   5. NAVBAR
+   ========================================================= */
+.navbar{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(247, 244, 238, 0.92);
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid rgba(var(--dark-green-rgb), 0.08);
+  transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.navbar.is-scrolled{
+  box-shadow: 0 8px 24px -18px rgba(var(--dark-green-rgb), 0.35);
+}
+.navbar-inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1.1rem;
+}
+.logo{
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.nav-links{
+  display: none;
+  align-items: center;
+  gap: var(--space-lg);
+}
+.nav-links a{
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.nav-links a:hover, .nav-links a:focus-visible, .nav-links a.is-active{
+  border-color: var(--soft-green);
+}
+.navbar-cta{ display: none; }
+.hamburger{
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0.5rem;
+}
+.hamburger span{
+  width: 22px;
+  height: 2px;
+  background: var(--dark-green);
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.hamburger[aria-expanded="true"] span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.hamburger[aria-expanded="true"] span:nth-child(2){ opacity: 0; }
+.hamburger[aria-expanded="true"] span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease);
+  border-bottom: 1px solid rgba(var(--dark-green-rgb), 0.08);
+  background: var(--off-white);
+}
+.mobile-menu.is-open{ max-height: 320px; }
+.mobile-menu-inner{
+  padding: var(--space-sm) clamp(1.5rem, 5vw, 3rem) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.mobile-menu a{ font-size: 1rem; font-weight: 500; }
+.mobile-menu .btn{ align-self: flex-start; margin-top: var(--space-2xs); }
+
+.mobile-menu a.is-active{
+  color: var(--dark-green);
+  font-weight: 700;
+}
+
+.mobile-menu[hidden]{ display: none; }
+
+@media (min-width: 860px){
+  .nav-links{ display: flex; }
+  .navbar-cta{ display: inline-flex; }
+  .hamburger, .mobile-menu{ display: none; }
+}
+
+/* =========================================================
+   6. HERO — horizontal editorial poster
+   ========================================================= */
+.hero{
+  padding-block: clamp(1rem, 2.5vw, 2rem) var(--space-xl);
+  overflow: hidden;
+}
+.hero .container{
+  display: block;
+}
+.hero-poster{
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: clamp(18px, 2.2vw, 30px);
+  background: var(--off-white);
+  box-shadow: var(--shadow-hero);
+}
+.hero-poster img{
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.hero-poster-link{
+  position: absolute;
+  left: clamp(1.15rem, 8vw, 7.5rem);
+  bottom: clamp(1.25rem, 8vw, 5.2rem);
+  min-height: 44px;
+  padding: .75rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--dark-green);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.hero-poster-link:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,.16);
+}
+.hero-poster-link:focus-visible{
+  outline: 3px solid rgba(95,108,98,.35);
+  outline-offset: 4px;
+}
+@media (max-width: 699px){
+  .hero{ padding-top: .75rem; }
+  .hero-poster{ border-radius: 18px; }
+  .hero-poster img{ aspect-ratio: 16 / 9; object-fit: cover; object-position: center; }
+  .hero-poster-link{
+    left: 1rem;
+    bottom: 1rem;
+    font-size: .68rem;
+    padding: .65rem 1rem;
+  }
+}
+
+/* =========================================================
+   7. PROBLEM / LIFESTYLE INTRO
+   ========================================================= */
+.problem-card{
+  padding: var(--space-md);
+  background: var(--off-white);
+  border-radius: var(--radius-card);
+}
+.problem-card p{ color: var(--text-muted); }
+
+/* =========================================================
+   8. BENEFITS / SOLUTION
+   ========================================================= */
+.benefits-layout{
+  display: grid;
+  gap: var(--space-lg);
+}
+.benefits-image .img-frame{ aspect-ratio: 5 / 4; }
+.benefits-list{
+  display: grid;
+  gap: var(--space-md);
+}
+.benefit-item p{ color: var(--text-muted); }
+@media (min-width: 900px){
+  .benefits-layout{ grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: var(--space-xl); }
+  .benefits-list{ grid-template-columns: repeat(2, 1fr); }
+}
+
+/* =========================================================
+   9. COLLECTION / PRODUCT CARDS — editorial, quieter chrome
+   ========================================================= */
+.product-card{
+  background: var(--off-white);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.product-card:hover, .product-card:focus-within{
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-soft);
+}
+.product-card .img-frame{ aspect-ratio: 4 / 5; border-radius: 0; }
+.product-card:hover .img-frame img, .product-card:focus-within .img-frame img{
+  transform: scale(1.045);
+}
+.product-card-body{ padding: var(--space-md); }
+.product-card-body h3{ margin-bottom: var(--space-3xs); font-size: 1.45rem; }
+.product-card-body p.desc{
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+  margin-bottom: var(--space-sm);
+}
+
+/* small colour-family dot + plain text instead of coloured "chip" tags —
+   quieter, more editorial, and only spends colour where it's informative */
+.product-mood{
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2xs);
+}
+.mood-dot{
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.product-card-footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-top: var(--space-2xs);
+}
+.price{
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark-green);
+}
+
+/* =========================================================
+   10. USE-CASE / SPACE CONTEXT
+   ========================================================= */
+/* =========================================================
+   11. WHY LUMORA
+   ========================================================= */
+.why-item p{ color: var(--text-muted); }
+
+/* =========================================================
+   12. LIFESTYLE / USE CASE
+   ========================================================= */
+.lifestyle-card{
+  min-width: 0;
+}
+.lifestyle-card .img-frame{
+  aspect-ratio: 4 / 5;
+}
+.lifestyle-caption{
+  padding: 1rem 0 0;
+  display: block;
+}
+.lifestyle-caption h3{
+  font-family: var(--font-heading);
+  font-size: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--dark-green);
+  margin: 0 0 0.3rem;
+}
+.lifestyle-caption p{
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+@media (max-width: 699px){
+  .lifestyle-caption{ padding-top: 0.85rem; }
+  .lifestyle-caption h3{ font-size: 1.1rem; }
+}
+
+/* =========================================================
+   13. TESTIMONIALS
+   ========================================================= */
+.testimonial-grid{ display: grid; gap: var(--space-md); }
+.testimonial-card{
+  background: var(--off-white);
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+}
+.stars{ color: var(--soft-green); font-size: 0.95rem; letter-spacing: 0.15em; margin-bottom: var(--space-sm); }
+.testimonial-card blockquote{
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--dark-green);
+  margin-bottom: var(--space-sm);
+}
+.testimonial-card cite{
+  font-style: normal;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--text-muted);
+}
+@media (min-width: 860px){ .testimonial-grid{ grid-template-columns: repeat(2, 1fr); } }
+
+/* =========================================================
+   14. HOW TO ORDER
+   ========================================================= */
+.order-flow{
+  display: grid;
+  gap: var(--space-lg);
+  position: relative;
+}
+.order-step{ position: relative; }
+.order-step .numeral{ font-size: 2.1rem; }
+.order-step p{ color: var(--text-muted); font-size: var(--fs-small); }
+@media (min-width: 860px){
+  .order-flow{ grid-template-columns: repeat(3, 1fr); }
+  .order-step:not(:last-child)::after{
+    content: "";
+    position: absolute;
+    top: 1.05rem;
+    left: calc(100% + var(--space-md) / 2);
+    width: var(--space-lg);
+    height: 1px;
+    background: rgba(var(--dark-green-rgb), 0.25);
+  }
+}
+
+/* =========================================================
+   15. FINAL CTA
+   ========================================================= */
+.final-cta{
+  background: var(--dark-green);
+  color: var(--off-white);
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+.final-cta h2{ color: var(--off-white); }
+.final-cta .lead{ color: rgba(255,255,255,0.78); margin-inline: auto; margin-block: var(--space-sm) var(--space-lg); }
+.final-cta .container{ position: relative; z-index: 1; }
+.final-cta .botanical-motif{
+  color: var(--off-white);
+  opacity: 0.08;
+  width: 420px;
+  right: -80px;
+  bottom: -60px;
+  transform: rotate(18deg);
+}
+
+/* =========================================================
+   16. FOOTER
+   ========================================================= */
+.footer{
+  padding-block: var(--space-xl) var(--space-lg);
+  border-top: 1px solid rgba(var(--dark-green-rgb), 0.1);
+}
+.footer-grid{
+  display: grid;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+.footer-brand .logo{ display: inline-block; margin-bottom: var(--space-2xs); }
+.footer-brand p{ font-size: var(--fs-small); color: var(--text-faint); }
+.footer-col h3{
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--dark-green);
+  margin-bottom: var(--space-sm);
+}
+.footer-col ul{ display: flex; flex-direction: column; gap: 0.6rem; }
+.footer-col a{ font-size: var(--fs-small); color: var(--text-muted); }
+.footer-col a:hover, .footer-col a:focus-visible{ color: var(--dark-green); }
+.footer-bottom{
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(var(--dark-green-rgb), 0.08);
+}
+@media (min-width: 700px){
+  .footer-grid{ grid-template-columns: 1.4fr repeat(3, 1fr); }
+}
+
+/* skip link */
+.skip-link{
+  position: absolute;
+  left: -999px;
+  top: auto;
+  background: var(--dark-green);
+  color: var(--off-white);
+  padding: 0.8em 1.2em;
+  border-radius: var(--radius-pill);
+  z-index: 999;
+}
+.skip-link:focus{
+  left: var(--space-sm);
+  top: var(--space-sm);
+}
+
+
+/* =========================================================
+   WHATSAPP ADMIN CHOOSER
+   ========================================================= */
+.wa-modal[hidden]{
+  display:none;
+}
+
+.wa-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:grid;
+  place-items:center;
+  padding:1.25rem;
+}
+
+.wa-modal-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(28, 38, 31, 0.48);
+  backdrop-filter:blur(3px);
+}
+
+.wa-modal-dialog{
+  position:relative;
+  width:min(100%, 430px);
+  padding:2rem;
+  background:var(--paper, #fffdf9);
+  border:1px solid rgba(95,108,98,.16);
+  border-radius:22px;
+  box-shadow:0 24px 70px rgba(28,38,31,.22);
+  text-align:center;
+}
+
+.wa-modal-dialog h2{
+  margin:.35rem 0 .6rem;
+}
+
+.wa-modal-dialog p{
+  margin:0 auto 1.35rem;
+  max-width:34rem;
+  color:var(--text-muted, #68736b);
+  line-height:1.6;
+}
+
+.wa-modal-close{
+  position:absolute;
+  top:.75rem;
+  right:.85rem;
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:var(--dark-green, #3f5045);
+  font-size:1.65rem;
+  line-height:1;
+  cursor:pointer;
+}
+
+.wa-modal-close:hover,
+.wa-modal-close:focus-visible{
+  background:rgba(95,108,98,.1);
+  outline:none;
+}
+
+.wa-admin-list{
+  display:grid;
+  gap:.75rem;
+}
+
+.wa-admin-btn{
+  width:100%;
+  min-height:48px;
+}
+
+.wa-admin-btn span{
+  font-size:0.8rem;
+  font-weight:500;
+  opacity:0.78;
+}
+
+body.wa-modal-open{
+  overflow:hidden;
+}
+
+@media (max-width:520px){
+  .wa-modal{
+    padding:1rem;
+  }
+
+  .wa-modal-dialog{
+    padding:1.75rem 1.25rem 1.35rem;
+    border-radius:18px;
+  }
+}
+
+
+/* =========================================================
+   BRAND AD VIDEO — editorial / seamless promotional break
+   ========================================================= */
+.ad-video-section{
+  background:var(--off-white);
+  overflow:hidden;
+}
+.ad-video-stage{
+  position:relative;
+  min-height:clamp(620px, 72vw, 820px);
+  display:grid;
+  grid-template-columns:minmax(180px, .72fr) minmax(260px, 380px) minmax(180px, .72fr);
+  align-items:center;
+  gap:clamp(1.5rem, 4vw, 4.5rem);
+}
+.ad-video-stage::before{
+  content:"";
+  position:absolute;
+  width:clamp(360px, 42vw, 620px);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:rgba(var(--soft-green-rgb), .11);
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  pointer-events:none;
+}
+.ad-video-copy,
+.ad-video-side,
+.ad-video-wrap{
+  position:relative;
+  z-index:1;
+}
+.ad-video-copy{
+  max-width:26rem;
+  justify-self:end;
+  padding-bottom:clamp(3rem, 8vw, 7rem);
+}
+.ad-video-copy h2{
+  max-width:12ch;
+}
+.ad-video-copy .lead{
+  max-width:30rem;
+  margin-top:var(--space-xs);
+}
+.ad-video-note{
+  margin-top:1.1rem;
+  font-size:var(--fs-small);
+  color:var(--text-muted);
+}
+.ad-video-side{
+  align-self:end;
+  max-width:16rem;
+  padding-bottom:clamp(2rem, 7vw, 5rem);
+}
+.ad-video-side-mark{
+  display:block;
+  font-family:var(--font-heading);
+  font-size:clamp(2.2rem, 4vw, 4rem);
+  line-height:.95;
+  color:rgba(var(--dark-green-rgb), .12);
+  margin-bottom:1.25rem;
+}
+.ad-video-side p{
+  font-size:var(--fs-small);
+  color:var(--text-muted);
+}
+.ad-video-wrap{
+  width:min(100%, 380px);
+  justify-self:center;
+  overflow:hidden;
+  border-radius:clamp(28px, 3vw, 40px);
+  background:var(--cream);
+  box-shadow:0 28px 70px -30px rgba(var(--dark-green-rgb), .38);
+  transform:rotate(-1.2deg);
+}
+.ad-video-wrap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border:1px solid rgba(255,255,255,.42);
+  border-radius:inherit;
+  pointer-events:none;
+}
+.ad-video{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:9 / 16;
+  object-fit:cover;
+  background:var(--cream);
+}
+.ad-video-sound{
+  position:absolute;
+  z-index:3;
+  right:1rem;
+  bottom:1rem;
+  min-width:44px;
+  min-height:44px;
+  padding:.65rem .9rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:999px;
+  background:rgba(53,72,58,.82);
+  color:#fff;
+  font-family:var(--font-body);
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.02em;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transition:transform var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.ad-video-sound:hover{
+  transform:translateY(-2px);
+  background:rgba(53,72,58,.94);
+}
+.ad-video-sound:focus-visible{
+  outline-color:#fff;
+  outline-offset:4px;
+}
+.ad-video-sound-icon{
+  font-size:1rem;
+  line-height:1;
+}
+@media (max-width: 900px){
+  .ad-video-stage{
+    min-height:auto;
+    grid-template-columns:minmax(150px, .75fr) minmax(250px, 340px);
+    gap:2rem;
+    padding-block:1rem;
+  }
+  .ad-video-copy{
+    justify-self:start;
+    padding-bottom:0;
+  }
+  .ad-video-side{
+    display:none;
+  }
+  .ad-video-wrap{
+    width:min(100%, 340px);
+  }
+}
+@media (max-width: 620px){
+  .ad-video-stage{
+    grid-template-columns:1fr;
+    gap:1.75rem;
+    padding-block:.5rem;
+  }
+  .ad-video-copy{
+    max-width:34rem;
+    text-align:center;
+    justify-self:center;
+  }
+  .ad-video-copy h2{
+    max-width:none;
+  }
+  .ad-video-copy .lead{
+    margin-inline:auto;
+  }
+  .ad-video-note{
+    margin-top:.8rem;
+  }
+  .ad-video-wrap{
+    width:min(78vw, 340px);
+    transform:rotate(0);
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  .ad-video-wrap{ transform:none; }
+}
+
+/* =========================================================
+   RESPONSIVE HARDENING — layout only, content unchanged
+   ========================================================= */
+@media (max-width: 699px){
+  html, body{
+    width:100%;
+    max-width:100%;
+  }
+
+  .container{
+    padding-inline:clamp(1rem, 5vw, 1.5rem);
+  }
+
+  .section{
+    padding-block:clamp(4rem, 13vw, 5.5rem);
+  }
+  .section--tight{
+    padding-block:clamp(3.5rem, 11vw, 5rem);
+  }
+
+  .section-head{
+    margin-bottom:clamp(2rem, 7vw, 3rem);
+  }
+
+  .section-head h2{
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+
+  .navbar-inner{
+    min-width:0;
+    gap:1rem;
+    padding-block:.9rem;
+  }
+  .logo{
+    min-width:0;
+    font-size:1.25rem;
+    white-space:nowrap;
+  }
+  .hamburger{
+    flex:0 0 auto;
+    min-width:44px;
+    min-height:44px;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .mobile-menu-inner{
+    padding-inline:clamp(1rem, 5vw, 1.5rem);
+  }
+  .mobile-menu .btn{
+    width:100%;
+    max-width:18rem;
+  }
+
+  .hero{
+    padding-bottom:clamp(2.5rem, 8vw, 4rem);
+  }
+  .hero-poster{
+    width:100%;
+  }
+  .hero-poster img{
+    width:100%;
+    max-width:none;
+    height:auto;
+  }
+  .hero-poster-link{
+    max-width:calc(100% - 2rem);
+    white-space:nowrap;
+  }
+
+  .problem-card,
+  .testimonial-card{
+    padding:clamp(1.25rem, 5vw, 2rem);
+  }
+
+  .collection-grid{
+    grid-template-columns:1fr;
+    gap:clamp(1.25rem, 5vw, 2rem);
+  }
+  .product-card{
+    min-width:0;
+  }
+  .product-card-body{
+    padding:clamp(1.1rem, 4.5vw, 1.5rem);
+  }
+  .product-card-body h3{
+    font-size:clamp(1.25rem, 5vw, 1.45rem);
+    overflow-wrap:normal;
+  }
+  .product-card p.desc{
+    overflow-wrap:anywhere;
+  }
+  .product-card-footer{
+    flex-wrap:wrap;
+    align-items:center;
+    gap:.75rem;
+  }
+  .product-card-footer .price{
+    flex:0 0 auto;
+  }
+  .product-card-footer .btn{
+    flex:1 1 8.5rem;
+    min-width:8.5rem;
+  }
+
+  .lifestyle-card,
+  .benefits-image,
+  .benefit-item,
+  .order-step,
+  .footer-col{
+    min-width:0;
+  }
+
+  .order-flow{
+    gap:clamp(2rem, 8vw, 3rem);
+  }
+
+  .footer-grid{
+    grid-template-columns:1fr;
+    gap:clamp(2rem, 8vw, 3rem);
+  }
+  .footer-bottom{
+    overflow-wrap:anywhere;
+  }
+}
+
+@media (max-width: 380px){
+  .container{
+    padding-inline:1rem;
+  }
+  .hero-poster-link{
+    left:.75rem;
+    bottom:.75rem;
+    max-width:calc(100% - 1.5rem);
+    padding:.6rem .85rem;
+    font-size:.64rem;
+  }
+  .product-card-footer{
+    align-items:stretch;
+  }
+  .product-card-footer .price{
+    width:100%;
+  }
+  .product-card-footer .btn{
+    flex-basis:100%;
+    width:100%;
+  }
+  .ad-video-wrap{
+    width:min(86vw, 320px);
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1023px){
+  .collection-grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  .product-card,
+  .lifestyle-card,
+  .benefit-item,
+  .order-step{
+    min-width:0;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="#top" class="logo">LUMORA</a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#top" data-nav-link>Home</a>
+      <a href="#collection" data-nav-link>Collection</a>
+      <a href="#why-lumora" data-nav-link>Why Lumora</a>
+      <a href="#testimonials" data-nav-link>Reviews</a>
+    </nav>
+
+    <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20dengan%20koleksi%20LUMORA.%20Boleh%20dibantu%20info%20lebih%20lanjut%3F" class="btn btn-primary btn-sm navbar-cta js-shop-now">Order via WhatsApp</a>
+
+    <button class="hamburger" id="hamburgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Primary mobile" inert>
+    <div class="mobile-menu-inner">
+      <a href="#top" data-nav-link>Home</a>
+      <a href="#collection" data-nav-link>Collection</a>
+      <a href="#why-lumora" data-nav-link>Why Lumora</a>
+      <a href="#testimonials" data-nav-link>Reviews</a>
+      <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20dengan%20koleksi%20LUMORA.%20Boleh%20dibantu%20info%20lebih%20lanjut%3F" class="btn btn-primary btn-sm js-shop-now">Order via WhatsApp</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main-content">
+
+  <!-- =========================================================
+       HERO — horizontal editorial poster
+       ========================================================= -->
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-poster reveal">
+        <img src="assets/lumora-hero-banner.png" alt="LUMORA collection displayed in a warm, natural interior setting." fetchpriority="high">
+        <a class="hero-poster-link" href="#collection">Shop Collection <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       PROBLEM / LIFESTYLE INTRO
+       ========================================================= -->
+  <section class="section section--tight" id="problem">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Your Space Deserves a Little More Life.</h2>
+        <p class="lead">Sometimes, a room doesn't need a complete makeover. Sometimes, all it needs is one thoughtful detail.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="problem-card reveal">
+          <span class="numeral">01</span>
+          <h3>Empty Desk</h3>
+          <p>Your desk feels a little too empty.</p>
+        </article>
+        <article class="problem-card reveal">
+          <span class="numeral">02</span>
+          <h3>Plain Room</h3>
+          <p>Your room needs a small touch of character.</p>
+        </article>
+        <article class="problem-card reveal">
+          <span class="numeral">03</span>
+          <h3>Small Space</h3>
+          <p>Beautiful decor doesn't have to take much space.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       BENEFITS / SOLUTION
+       ========================================================= -->
+  <section class="section" id="benefits">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Small Plant. Big Difference.</h2>
+        <p class="lead">Designed to bring warmth, character, and a little nature into your everyday space.</p>
+      </div>
+
+      <div class="benefits-layout">
+        <div class="benefits-image img-frame reveal">
+          <img src="assets/product-01.jpg" loading="lazy" alt="LUMORA plant decor styled on a study desk, showing its compact size."
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="img-fallback-label">Styled on a desk</span>
+        </div>
+
+        <div class="benefits-list">
+          <div class="benefit-item reveal">
+            <span class="numeral">01</span>
+            <h3>Compact</h3>
+            <p>Perfect for desks, shelves, and small spaces.</p>
+          </div>
+          <div class="benefit-item reveal">
+            <span class="numeral">02</span>
+            <h3>Natural</h3>
+            <p>Warm materials and organic details create a calming atmosphere.</p>
+          </div>
+          <div class="benefit-item reveal">
+            <span class="numeral">03</span>
+            <h3>Easy to Style</h3>
+            <p>Designed to complement different interior styles.</p>
+          </div>
+          <div class="benefit-item reveal">
+            <span class="numeral">04</span>
+            <h3>Giftable</h3>
+            <p>A thoughtful little gift for someone special.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       BRAND AD VIDEO — promotional content
+       ========================================================= -->
+  <section class="section section--tight ad-video-section" id="ad-video" aria-labelledby="ad-video-title">
+    <div class="container">
+      <div class="ad-video-stage">
+        <div class="ad-video-copy reveal">
+          <span class="eyebrow">LUMORA IN MOTION</span>
+          <h2 id="ad-video-title">A Little Green, A Better Space.</h2>
+          <p class="lead">A small touch of nature can make an everyday corner feel warmer, calmer, and more personal.</p>
+          <p class="ad-video-note">The story continues in our collection below.</p>
+        </div>
+
+        <figure class="ad-video-wrap reveal">
+          <video class="ad-video" id="lumoraAdVideo" autoplay muted loop playsinline preload="auto" poster="assets/lumora-ad-poster.jpg" aria-label="LUMORA promotional advertisement video">
+            <source src="assets/lumora-ad.mp4" type="video/mp4">
+            <source src="assets/lumora-ad.mov" type="video/quicktime">
+            Your browser does not support the video element.
+          </video>
+          <button class="ad-video-sound" type="button" id="adVideoSound" aria-label="Turn sound on" aria-pressed="false">
+            <span class="ad-video-sound-icon" aria-hidden="true">🔇</span>
+            <span class="ad-video-sound-label">Sound off</span>
+          </button>
+        </figure>
+
+        <div class="ad-video-side reveal" aria-hidden="true">
+          <span class="ad-video-side-mark">little<br>details.</span>
+          <p>Designed to feel at home in the spaces you already love.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       COLLECTION — 6 products
+       ========================================================= -->
+  <section class="section" id="collection">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">OUR COLLECTION</span>
+        <h2>Find Your Little Bloom.</h2>
+        <p class="lead">Six little pieces designed to bring a touch of nature into your everyday space.</p>
+      </div>
+
+      <div class="collection-grid">
+        <!-- Product 01 — GREEN LEAF HAVEN -->
+        <article class="product-card reveal">
+          <div class="img-frame">
+            <img src="assets/collection-product-01.jpeg" loading="lazy" alt="GREEN LEAF HAVEN — tanaman daun variageta yang tampak asli."
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">GREEN LEAF HAVEN</span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-mood">
+              <span class="mood-dot" style="background: var(--soft-green)"></span>
+              Calm &middot; Natural &middot; Minimal
+            </div>
+            <h3>GREEN LEAF HAVEN</h3>
+            <p class="desc">Tanaman daun variageta yg tampak asli.</p>
+            <div class="product-card-footer">
+              <span class="price">Rp 10.719</span>
+              <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20untuk%20memesan%3A%0A%0AProduct%3A%20GREEN%20LEAF%20HAVEN%0APrice%3A%20Rp10.719%0AQuantity%3A%201%0A%0AMohon%20informasi%20selanjutnya." class="btn btn-primary btn-sm js-order-btn"
+                 data-whatsapp-product="GREEN LEAF HAVEN" data-whatsapp-price="Rp10.719">Order Now</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 02 — RED LILY BLOOM -->
+        <article class="product-card reveal">
+          <div class="img-frame">
+            <img src="assets/collection-product-02.jpeg" loading="lazy" alt="RED LILY BLOOM — lili merah merekah simbol kasih sayang."
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">RED LILY BLOOM</span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-mood">
+              <span class="mood-dot" style="background: var(--deep-red)"></span>
+              Bold &middot; Warm &middot; Vibrant
+            </div>
+            <h3>RED LILY BLOOM</h3>
+            <p class="desc">Lili Merah Merekah Simbol Kasih Sayang.</p>
+            <div class="product-card-footer">
+              <span class="price">Rp 9.000</span>
+              <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20untuk%20memesan%3A%0A%0AProduct%3A%20RED%20LILY%20BLOOM%0APrice%3A%20Rp9.000%0AQuantity%3A%201%0A%0AMohon%20informasi%20selanjutnya." class="btn btn-primary btn-sm js-order-btn"
+                 data-whatsapp-product="RED LILY BLOOM" data-whatsapp-price="Rp9.000">Order Now</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 03 — Pomegeanate Sprig -->
+        <article class="product-card reveal">
+          <div class="img-frame">
+            <img src="assets/collection-product-03.jpeg" loading="lazy" alt="Pomegeanate Sprig — ranting delima penambah kemewahan."
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">Pomegeanate Sprig</span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-mood">
+              <span class="mood-dot" style="background: var(--soft-green)"></span>
+              Quiet &middot; Textured &middot; Natural
+            </div>
+            <h3>Pomegeanate Sprig</h3>
+            <p class="desc">Ranting Delima Penambah Kemewahan.</p>
+            <div class="product-card-footer">
+              <span class="price">Rp 12.500</span>
+              <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20untuk%20memesan%3A%0A%0AProduct%3A%20Pomegeanate%20Sprig%0APrice%3A%20Rp12.500%0AQuantity%3A%201%0A%0AMohon%20informasi%20selanjutnya." class="btn btn-primary btn-sm js-order-btn"
+                 data-whatsapp-product="Pomegeanate Sprig" data-whatsapp-price="Rp12.500">Order Now</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 04 — IVORY ORCHID -->
+        <article class="product-card reveal">
+          <div class="img-frame">
+            <img src="assets/collection-product-04.jpeg" loading="lazy" alt="IVORY ORCHID — anggrek krem dengan pot kayu penambah estetika."
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">IVORY ORCHID</span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-mood">
+              <span class="mood-dot" style="background: var(--wood-brown)"></span>
+              Warm &middot; Earthy &middot; Textural
+            </div>
+            <h3>IVORY ORCHID</h3>
+            <p class="desc">Anggrek Krem dengan Pot Kayu Penambah Estetika.</p>
+            <div class="product-card-footer">
+              <span class="price">Rp 17.500</span>
+              <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20untuk%20memesan%3A%0A%0AProduct%3A%20IVORY%20ORCHID%0APrice%3A%20Rp17.500%0AQuantity%3A%201%0A%0AMohon%20informasi%20selanjutnya." class="btn btn-primary btn-sm js-order-btn"
+                 data-whatsapp-product="IVORY ORCHID" data-whatsapp-price="Rp17.500">Order Now</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 05 — BLUSH ORCHID -->
+        <article class="product-card reveal">
+          <div class="img-frame">
+            <img src="assets/collection-product-05.jpeg" loading="lazy" alt="BLUSH ORCHID — kombinasi anggrek pink dengan daun hijau yang trendi."
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">BLUSH ORCHID</span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-mood">
+              <span class="mood-dot" style="background: var(--dark-green)"></span>
+              Minimal &middot; Calm &middot; Elegant
+            </div>
+            <h3>BLUSH ORCHID</h3>
+            <p class="desc">Kombinasi Anggrek pink dengan daun hijau yg trendi.</p>
+            <div class="product-card-footer">
+              <span class="price">Rp 28.500</span>
+              <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20untuk%20memesan%3A%0A%0AProduct%3A%20BLUSH%20ORCHID%0APrice%3A%20Rp28.500%0AQuantity%3A%201%0A%0AMohon%20informasi%20selanjutnya." class="btn btn-primary btn-sm js-order-btn"
+                 data-whatsapp-product="BLUSH ORCHID" data-whatsapp-price="Rp28.500">Order Now</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 06 — SUNNY DAISY POT -->
+        <article class="product-card reveal">
+          <div class="img-frame">
+            <img src="assets/collection-product-06.jpeg" loading="lazy" alt="SUNNY DAISY POT — bunga matahari penuh dengan pot biru segar."
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">SUNNY DAISY POT</span>
+          </div>
+          <div class="product-card-body">
+            <div class="product-mood">
+              <span class="mood-dot" style="background: var(--wood-brown)"></span>
+              Warm &middot; Bright &middot; Natural
+            </div>
+            <h3>SUNNY DAISY POT</h3>
+            <p class="desc">Bunga Matahari Penuh dengan Pot biru segar.</p>
+            <div class="product-card-footer">
+              <span class="price">Rp 42.750</span>
+              <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20untuk%20memesan%3A%0A%0AProduct%3A%20SUNNY%20DAISY%20POT%0APrice%3A%20Rp42.750%0AQuantity%3A%201%0A%0AMohon%20informasi%20selanjutnya." class="btn btn-primary btn-sm js-order-btn" aria-label="Order SUNNY DAISY POT via WhatsApp" data-whatsapp-product="SUNNY DAISY POT" data-whatsapp-price="Rp42.750">Order Now</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MADE FOR YOUR SPACE — use cases, not product categories
+       ========================================================= -->
+  <section class="section section--tight" id="lifestyle">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">MADE FOR YOUR SPACE</span>
+        <h2>A Little Green, Anywhere.</h2>
+        <p class="lead">A little detail can make every corner feel more personal.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <figure class="lifestyle-card reveal">
+          <div class="img-frame">
+            <img src="assets/lifestyle-study-desk.jpg" alt="LUMORA product styled for a study desk." loading="lazy"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">Study Desk</span>
+          </div>
+          <figcaption class="lifestyle-caption">
+            <h3>Study Desk</h3>
+            <p>For your study corner.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="lifestyle-card reveal">
+          <div class="img-frame">
+            <img src="assets/lifestyle-bedroom.jpg" alt="LUMORA product styled for a bedroom space." loading="lazy"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">Bedroom</span>
+          </div>
+          <figcaption class="lifestyle-caption">
+            <h3>Bedroom</h3>
+            <p>For your personal space.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="lifestyle-card reveal">
+          <div class="img-frame">
+            <img src="assets/lifestyle-workspace.jpg" alt="LUMORA product styled for a workspace." loading="lazy"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="img-fallback-label">Workspace</span>
+          </div>
+          <figcaption class="lifestyle-caption">
+            <h3>Workspace</h3>
+            <p>For your everyday work.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       WHY LUMORA
+       ========================================================= -->
+  <section class="section" id="why-lumora">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Made for Your Everyday Space.</h2>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="why-item reveal">
+          <span class="numeral">01</span>
+          <h3>Thoughtfully Designed</h3>
+          <p>Simple forms designed to fit naturally into your space.</p>
+        </div>
+        <div class="why-item reveal">
+          <span class="numeral">02</span>
+          <h3>Small &amp; Practical</h3>
+          <p>Beautiful decoration without taking over your room.</p>
+        </div>
+        <div class="why-item reveal">
+          <span class="numeral">03</span>
+          <h3>Natural Character</h3>
+          <p>Warm textures and greenery create a calm atmosphere.</p>
+        </div>
+        <div class="why-item reveal">
+          <span class="numeral">04</span>
+          <h3>Affordable Beauty</h3>
+          <p>Small details that make a meaningful difference.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       TESTIMONIALS
+       ========================================================= -->
+  <section class="section section--tight" id="testimonials">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Loved by Little-Space Lovers.</h2>
+      </div>
+
+      <div class="testimonial-grid">
+        <div class="testimonial-card reveal">
+          <div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote lang="id">"Ukurannya pas banget untuk meja belajar saya. Kamar jadi terasa lebih hidup."</blockquote>
+          <cite>— Alya, Student</cite>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote lang="id">"Saya suka karena desainnya simple dan nggak makan tempat."</blockquote>
+          <cite>— Raka, Student</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       HOW TO ORDER
+       ========================================================= -->
+  <section class="section" id="how-to-order">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Bring LUMORA Home.</h2>
+      </div>
+
+      <div class="order-flow">
+        <div class="order-step reveal">
+          <span class="numeral">01</span>
+          <h3>Choose</h3>
+          <p>Pick your favorite bloom.</p>
+        </div>
+        <div class="order-step reveal">
+          <span class="numeral">02</span>
+          <h3>Order</h3>
+          <p>Place your order through WhatsApp.</p>
+        </div>
+        <div class="order-step reveal">
+          <span class="numeral">03</span>
+          <h3>Enjoy</h3>
+          <p>Let your little corner bloom.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FINAL CTA
+       ========================================================= -->
+  <section class="section final-cta" id="final-cta">
+    <svg class="botanical-motif" viewBox="0 0 200 300" aria-hidden="true">
+      <path d="M100 280 C95 220 105 180 100 120 C98 90 110 60 100 20" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M100 210 C80 200 62 182 52 154" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M100 210 C120 200 138 182 148 154" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M100 145 C84 136 70 120 64 96" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M100 145 C116 136 130 120 136 96" fill="none" stroke="currentColor" stroke-width="2"/>
+    </svg>
+    <div class="container reveal">
+      <h2>Ready to Make Your Space Bloom?</h2>
+      <p class="lead">Bring a little nature into your everyday life.</p>
+      <a href="https://wa.me/6282181361014?text=Halo%20LUMORA%2C%20saya%20tertarik%20dengan%20koleksi%20LUMORA.%20Boleh%20dibantu%20info%20lebih%20lanjut%3F" class="btn btn-on-dark js-shop-now">Order via WhatsApp</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="logo">LUMORA</span>
+        <p>A Little Green, A Better Space.</p>
+      </div>
+
+      <div class="footer-col">
+        <h3>Explore</h3>
+        <ul>
+          <li><a href="#top">Home</a></li>
+          <li><a href="#collection">Collection</a></li>
+          <li><a href="#why-lumora">Why Lumora</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="https://wa.me/6282181361014" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Studio</h3>
+        <ul>
+          <li><a href="#why-lumora">Our Story</a></li>
+          <li><a href="#how-to-order">How to Order</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer-bottom">&copy; 2026 LUMORA. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- =========================================================
+     WHATSAPP ADMIN CHOOSER
+     ========================================================= -->
+<div class="wa-modal" id="waModal" hidden>
+  <div class="wa-modal-backdrop" data-wa-close></div>
+  <div class="wa-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="waModalTitle">
+    <button class="wa-modal-close" type="button" id="waModalClose" aria-label="Close WhatsApp admin selection">&times;</button>
+    <span class="eyebrow">ORDER VIA WHATSAPP</span>
+    <h2 id="waModalTitle">Choose an Admin</h2>
+    <p id="waModalMessage">Choose which LUMORA admin you would like to contact.</p>
+    <div class="wa-admin-list">
+      <button type="button" class="btn btn-primary wa-admin-btn" data-wa-admin="admin1">Admin 1 <span aria-hidden="true">· 0821-8136-1014</span></button>
+      <button type="button" class="btn btn-primary wa-admin-btn" data-wa-admin="admin2">Admin 2 <span aria-hidden="true">· 0823-9101-0405</span></button>
+    </div>
+  </div>
+</div>
+<script>
+/* =========================================================
+   CONFIG — ganti nomor WhatsApp di sini (satu tempat saja)
+   ========================================================= */
+const LUMORA_CONFIG = {
+  admin1: "6282181361014",
+  admin2: "6282391010405"
+};
+
+/* =========================================================
+   WHATSAPP ORDER LINKS
+   ========================================================= */
+function buildWhatsAppLink(number, message){
+  return "https://wa.me/" + number + "?text=" + encodeURIComponent(message);
+}
+
+const waModal = document.getElementById("waModal");
+const waModalClose = document.getElementById("waModalClose");
+const waModalMessage = document.getElementById("waModalMessage");
+let waPendingMessage = "";
+let waPreviousFocus = null;
+
+function openWhatsAppChooser(message, trigger){
+  waPendingMessage = message;
+  waPreviousFocus = trigger || document.activeElement;
+  waModalMessage.textContent = "Pilih admin LUMORA untuk melanjutkan pesanan Anda.";
+  waModal.hidden = false;
+  document.body.classList.add("wa-modal-open");
+  waModalClose.focus();
+}
+
+function closeWhatsAppChooser(){
+  waModal.hidden = true;
+  document.body.classList.remove("wa-modal-open");
+  if(waPreviousFocus && typeof waPreviousFocus.focus === "function"){
+    waPreviousFocus.focus();
+  }
+}
+
+// Tombol "Order Now" pada setiap produk -> pesan berisi produk, harga, dan jumlah awal.
+document.querySelectorAll(".js-order-btn").forEach(function(btn){
+  btn.addEventListener("click", function(e){
+    const product = btn.getAttribute("data-whatsapp-product");
+    const price = btn.getAttribute("data-whatsapp-price");
+    const message =
+      "Halo Admin LUMORA, saya ingin melakukan pemesanan.\n\n" +
+      "Produk: " + product + "\n" +
+      "Harga: " + price + "\n" +
+      "Jumlah: 1\n\n" +
+      "Mohon informasi mengenai ketersediaan produk dan proses pemesanannya.\n\n" +
+      "Terima kasih.";
+
+    // Native href tetap tersedia sebagai fallback jika JavaScript tidak aktif.
+    e.preventDefault();
+    openWhatsAppChooser(message, btn);
+  });
+});
+
+// Tombol "Order via WhatsApp" -> pesan umum lalu pilih admin.
+document.querySelectorAll(".js-shop-now").forEach(function(btn){
+  btn.addEventListener("click", function(e){
+    const message =
+      "Halo Admin LUMORA, saya tertarik dengan koleksi LUMORA. " +
+      "Boleh dibantu info produk dan proses pemesanannya?";
+
+    e.preventDefault();
+    openWhatsAppChooser(message, btn);
+  });
+});
+
+// Setelah admin dipilih, buka WhatsApp dengan pesan yang sudah disiapkan.
+document.querySelectorAll("[data-wa-admin]").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    const adminKey = btn.getAttribute("data-wa-admin");
+    const number = LUMORA_CONFIG[adminKey];
+    const whatsappUrl = buildWhatsAppLink(number, waPendingMessage);
+
+    closeWhatsAppChooser();
+    window.open(whatsappUrl, "_blank", "noopener");
+  });
+});
+
+waModalClose.addEventListener("click", closeWhatsAppChooser);
+waModal.querySelector("[data-wa-close]").addEventListener("click", closeWhatsAppChooser);
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && !waModal.hidden){
+    closeWhatsAppChooser();
+  }
+});
+
+/* =========================================================
+   AD VIDEO — muted autoplay + user-controlled sound
+   ========================================================= */
+const adVideo = document.getElementById("lumoraAdVideo");
+const adVideoSound = document.getElementById("adVideoSound");
+const adVideoSoundIcon = adVideoSound ? adVideoSound.querySelector(".ad-video-sound-icon") : null;
+const adVideoSoundLabel = adVideoSound ? adVideoSound.querySelector(".ad-video-sound-label") : null;
+
+function updateAdVideoSoundUI(){
+  if(!adVideo || !adVideoSound) return;
+  const isMuted = adVideo.muted;
+  adVideoSound.setAttribute("aria-pressed", String(!isMuted));
+  adVideoSound.setAttribute("aria-label", isMuted ? "Turn sound on" : "Turn sound off");
+  if(adVideoSoundIcon) adVideoSoundIcon.textContent = isMuted ? "🔇" : "🔊";
+  if(adVideoSoundLabel) adVideoSoundLabel.textContent = isMuted ? "Sound off" : "Sound on";
+}
+
+if(adVideo && adVideoSound){
+  // Muted autoplay is intentional so the ad can start without browser interruption.
+  adVideo.muted = true;
+  adVideo.autoplay = true;
+  adVideo.playsInline = true;
+
+  adVideoSound.addEventListener("click", function(){
+    adVideo.muted = !adVideo.muted;
+    updateAdVideoSoundUI();
+  });
+
+  updateAdVideoSoundUI();
+
+  // Respect users who request reduced motion by stopping the promotional playback.
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if(reduceMotion.matches){
+    adVideo.pause();
+  }else{
+    const playPromise = adVideo.play();
+    if(playPromise && typeof playPromise.catch === "function") playPromise.catch(function(){});
+  }
+}
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+mobileMenu.setAttribute("inert", "");
+
+function closeMobileMenu(){
+  hamburgerBtn.setAttribute("aria-expanded", "false");
+  hamburgerBtn.setAttribute("aria-label", "Open navigation menu");
+  mobileMenu.classList.remove("is-open");
+  mobileMenu.setAttribute("inert", "");
+}
+
+function openMobileMenu(){
+  mobileMenu.removeAttribute("inert");
+  mobileMenu.classList.add("is-open");
+  hamburgerBtn.setAttribute("aria-expanded", "true");
+  hamburgerBtn.setAttribute("aria-label", "Close navigation menu");
+}
+
+hamburgerBtn.addEventListener("click", function(){
+  const isOpen = hamburgerBtn.getAttribute("aria-expanded") === "true";
+  if(isOpen){
+    closeMobileMenu();
+  }else{
+    openMobileMenu();
+  }
+});
+
+mobileMenu.querySelectorAll("a").forEach(function(link){
+  link.addEventListener("click", closeMobileMenu);
+});
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && hamburgerBtn.getAttribute("aria-expanded") === "true"){
+    closeMobileMenu();
+    hamburgerBtn.focus();
+  }
+});
+
+/* =========================================================
+   STICKY NAVBAR SHADOW ON SCROLL
+   ========================================================= */
+const navbar = document.getElementById("navbar");
+function handleNavbarScroll(){
+  navbar.classList.toggle("is-scrolled", window.scrollY > 8);
+}
+window.addEventListener("scroll", handleNavbarScroll, { passive: true });
+handleNavbarScroll();
+
+/* =========================================================
+   ACTIVE NAV LINK ON SCROLL
+   ========================================================= */
+const navLinkMap = {};
+document.querySelectorAll("[data-nav-link]").forEach(function(link){
+  const id = link.getAttribute("href").replace("#", "");
+  if(!navLinkMap[id]) navLinkMap[id] = [];
+  navLinkMap[id].push(link);
+});
+
+const navSectionIds = ["top", "collection", "why-lumora", "testimonials"];
+const navSections = navSectionIds
+  .map(function(id){ return document.getElementById(id); })
+  .filter(Boolean);
+
+if("IntersectionObserver" in window && navSections.length){
+  const navObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        Object.values(navLinkMap).flat().forEach(function(link){ link.classList.remove("is-active"); });
+        const links = navLinkMap[entry.target.id] || [];
+        links.forEach(function(link){ link.classList.add("is-active"); });
+      }
+    });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+
+  navSections.forEach(function(section){ navObserver.observe(section); });
+}
+
+/* =========================================================
+   SUBTLE SCROLL REVEAL
+   ========================================================= */
+const revealEls = document.querySelectorAll(".reveal");
+if("IntersectionObserver" in window && revealEls.length){
+  const revealObserver = new IntersectionObserver(function(entries, observer){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+
+  revealEls.forEach(function(el){ revealObserver.observe(el); });
+}else{
+  revealEls.forEach(function(el){ el.classList.add("is-visible"); });
+}
+</script>
+
+
+
+</body>
+</html>
